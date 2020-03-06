@@ -169,96 +169,95 @@ struct node *insertIter(struct node *node, int key){ // insert iter
     
 }
 
-struct node* deleteIter(struct node* root, int key) {
-    // find node to delete (node with key equal to the input parameter `key`
-    struct node* currentNode = root;
+struct node* deleteIter(struct node* node, int key) {
+    struct node* current = node;
     struct node* parentNode = NULL;
-    while (currentNode) {
-        if (currentNode->key == key) {
+    while (current) {
+        if (current->key == key) {
             break;
         }
-        if (key > currentNode->key && currentNode->right != NULL) {
-            parentNode = currentNode;
-            currentNode = currentNode->right;
+        if (key > current->key && current->right != NULL) {
+            parentNode = current;
+            current = current->right;
         }
-        else if (key < currentNode->key && currentNode->left != NULL){
-            parentNode = currentNode;
-            currentNode = currentNode->left;
+        else if (key < current->key && current->left != NULL){
+            parentNode = current;
+            current = current->left;
         }
         else {
-            return root;
+            return node;
         }
     }
-    while (true) {
-        if (currentNode->left == NULL && currentNode->right == NULL) { // no child
+    while (current != NULL) {
+        if (current->left == NULL && current->right == NULL) { // no child
             if (parentNode == NULL) {
                 return NULL;
             }
-            else if (currentNode == parentNode->left) {
+            else if (current == parentNode->left) {
                 free(parentNode->left);
                 parentNode->left = NULL;
-                return root;
+                return node;
             }
             else {
                 free(parentNode->right);
                 parentNode->right = NULL;
-                return root;
+                return node;
             }
         }
         
-        else if (currentNode->left == NULL) { // only right child
+        else if (current->left == NULL) { // only right child
             if (parentNode == NULL) {
-                root = currentNode->right;
-                free(currentNode);
-                return root;
+                node = current->right;
+                free(current);
+                return node;
             }
             else {
-                if (currentNode == parentNode->left) {
-                    parentNode->left = currentNode->right;
-                    free(currentNode);
-                    return root;
+                if (current == parentNode->left) {
+                    parentNode->left = current->right;
+                    free(current);
+                    return node;
                 }
                 else {
-                    parentNode->right = currentNode->right;
-                    free(currentNode);
-                    return root;
+                    parentNode->right = current->right;
+                    free(current);
+                    return node;
                 }
             }
         }
         
-        else if (currentNode->right == NULL) { // only left child
+        else if (current->right == NULL) { // only left child
             if (parentNode == NULL) {
-                root = currentNode->left;
-                free(currentNode);
-                return root;
+                node = current->left;
+                free(current);
+                return node;
             }
             else {
-                if (currentNode == parentNode->left) {
-                    parentNode->left = currentNode->left;
-                    free(currentNode);
-                    return root;
+                if (current == parentNode->left) {
+                    parentNode->left = current->left;
+                    free(current);
+                    return node;
                 }
                 else {
-                    parentNode->right = currentNode->left;
-                    free(currentNode);
-                    return root;
+                    parentNode->right = current->left;
+                    free(current);
+                    return node;
                 }
             }
         }
-        // we have both children to deal with both children
-        else {
+        
+        else { // both children
             //pointing to right subtree of the current node
-            struct node* inOrderSuccessor = currentNode->right;
-            parentNode = currentNode;
-            while(inOrderSuccessor->left) { // left most successor
-                parentNode = inOrderSuccessor;
-                inOrderSuccessor = inOrderSuccessor->left;
+            struct node* leftMost = current->right;
+            parentNode = current;
+            while(leftMost->left) { // left most successor
+                parentNode = leftMost;
+                leftMost = leftMost->left;
             }
-            currentNode->key = inOrderSuccessor->key;
-            currentNode = inOrderSuccessor;
+            current->key = leftMost->key;
+            current = leftMost;
         }
     }
-    return root;
+    return node;
 }
 
 struct node *findNextIter(struct node *node, int key){ // find next iter
